@@ -1,0 +1,22 @@
+bash
+#!/bin/bash
+
+# Проверка, что есть хотя бы один .txt файл
+txt_files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.txt$')
+if [ -z "$txt_files" ]; then
+  echo "No .txt files found in the commit."
+  exit 0 #Выход с кодом 0, т.к. ошибка отсутствия файлов не критична.
+fi
+
+# Проверка каждого .txt файла на наличие текста
+for file in $txt_files; do
+  # Проверка на пустоту.  grep -q возвращает 0 если совпадение найдено, 1 иначе.
+  if ! grep -q . "$file"; then
+    echo "Error: File '$file' is empty or contains only whitespace."
+    exit 1
+  fi
+done
+
+echo "All .txt files are valid."
+exit 0
+
